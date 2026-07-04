@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>فرم ورود</title>
+        <link rel="stylesheet" href="./css/login-index.css">
+    </head>
+    <body>
+
+        <div class="container">
+            <h2>Registration Form</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>username</label>
+                    <input type="text" id="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>password</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Repeat password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="input-group">
+                    <label>Captcha</label>
+
+                    <div>
+                        <span id="captchaText"></span>
+                        <button type="button" id="refreshCaptcha">↻</button>
+                    </div>
+
+                    <input type="text" id="captchaInput"
+                        placeholder="Enter captcha" required>
+                </div>
+                <button type="submit">Submit</button>
+
+                <p id="message" class="error"></p>
+            </form>
+        </div>
+
+        <!-------------- SCRIPT JS --------------->
+        <script defer src="script.js">
+
+
+        </script>
+    </body>
+</html>

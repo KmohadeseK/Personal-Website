@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Comments Panel</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/admin.css">
+
+  </head>
+  <body>
+    <!--header-container html [START]-->
+    <div id="header-container">
+      <!--header-box html [START]-->
+      <div class="header-box">
+        <img src="images/logo.webp" alt>
+        <!--main-menu html [START]-->
+        <div id="main-menu">
+          <ul class="nav__links">
+            <li><a class="navbar-link" href="#home">HOME</a></li>
+            <li><a class="navbar-link" href="#about">ABOUT</a></li>
+            <li><a class="navbar-link" href="#services">SERVICES</a></li>
+            <li><a class="navbar-link" href="#portfolio">PORTFOLIO</a></li>
+            <li><a class="navbar-link" href="#pricing">PRICING</a></li>
+
+            <!-- Html code main-menu ul :BLOG [START] -->
+            <li>
+              <a class="navbar-link" href="#blog">BLOG</a>
+              <ul>
+                <li><a href="#blog-home">Blog Home</a></li>
+                <li><a href="#blog-single">Blog Single</a></li>
+              </ul>
+            </li>
+            <!-- Html code main-menu ul :BLOG [END] -->
+
+            <!-- Html code main-menu ul :PAGES [START] -->
+            <li>
+              <a class="navbar-link" href="#pages">PAGES</a>
+              <ul>
+                <li><a href="#">Elements</a></li>
+
+                <li>
+                  <!-- Html code main-menu ul>li :Level 2 [START] -->
+                  <a href="#">Level 2</a>
+                  <ul>
+                    <li><a href="#">Item One</a></li>
+                    <li><a href="#">Item Two</a></li>
+                  </ul>
+                </li>
+                <!-- Html code main-menu ul>li :Level 2 [END] -->
+              </ul>
+            </li>
+            <!-- Html code main-menu ul :PAGES [END] -->
+
+            <li><a class="navbar-link" href="#contact">CONTACT</a></li>
+            <li><a class="navbar-link" href="./admin.html" target="_blank">ADMIN
+                PANEL</a></li>
+          </ul>
+        </div>
+        <!--main-menu html [END]-->
+      </div>
+      <!--header-box html [END]-->
+    </div>
+    <!--header-container html [END]-->
+    <div class="container">
+
+      <div class="admin-header">
+        <div>
+          <h1>Comment moderation</h1>
+          <p>Review, approve, or reject user comments</p>
+          <div class="divider"></div>
+        </div>
+        <a href="comments.html" class="back-link">← Back to comments</a>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('pending')">
+          Pending
+          <span class="badge badge-pending" id="pendingBadge">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('approved')">
+          Approved
+          <span class="badge badge-approved" id="approvedBadge">0</span>
+        </button>
+      </div>
+
+      <div class="section active" id="pendingSection"></div>
+      <div class="section" id="approvedSection"></div>
+
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const STORAGE_KEY_APPROVED = 'comments_approved';
+    const STORAGE_KEY_PENDING  = 'comments_pending';
+
+    function getApproved() { return JSON.parse(localStorage.getItem(STORAGE_KEY_APPROVED) || '[]'); }
+    function getPending()   { return JSON.parse(localStorage.getItem(STORAGE_KEY_PENDING)  || '[]'); }
+    function saveApproved(list) { localStorage.setItem(STORAGE_KEY_APPROVED, JSON.stringify(list)); }
+    function savePending(list)  { localStorage.setItem(STORAGE_KEY_PENDING,  JSON.stringify(list)); }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' })
+           + ' — '
+           + d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+    }
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    let activeTab = 'pending';
+    function switchTab(tab) {
+      activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', (i===0&&tab==='pending')||(i===1&&tab==='approved'));
+      });
+      document.getElementById('pendingSection').classList.toggle('active',  tab==='pending');
+      document.getElementById('approvedSection').classList.toggle('active', tab==='approved');
+      render();
+    }
+
+    function render() { renderPending(); renderApproved(); updateBadges(); }
+
+    function renderPending() {
+      const list = getPending();
+      const el   = document.getElementById('pendingSection');
+      if (list.length === 0) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-icon">✓</div><p>No comments waiting for approval.</p></div>`;
+        return;
+      }
+      el.innerHTML = list.slice().reverse().map(c => `
+        <div class="card" id="card-p-${c.id}">
+          <div class="card-meta">
+            <span class="card-author">
+              ${escapeHtml(c.name)}
+              ${c.email ? `<span class="card-email">${escapeHtml(c.email)}</span>` : ''}
+            </span>
+            <span class="card-date">${formatDate(c.date)}</span>
+          </div>
+          <p class="card-text">${escapeHtml(c.text)}</p>
+          <div class="card-actions">
+            <button class="btn btn-approve" onclick="approve(${c.id})">Approve</button>
+            <button class="btn btn-reject"  onclick="reject(${c.id})">Reject</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderApproved() {
+      const list = getApproved();
+      const el   = document.getElementById('approvedSection');
+      if (list.length === 0) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p>No approved comments yet.</p></div>`;
+        return;
+      }
+      el.innerHTML = list.slice().reverse().map(c => `
+        <div class="card" id="card-a-${c.id}">
+          <div class="card-meta">
+            <span class="card-author">
+              ${escapeHtml(c.name)}
+              ${c.email ? `<span class="card-email">${escapeHtml(c.email)}</span>` : ''}
+            </span>
+            <span class="card-date">${formatDate(c.date)}</span>
+          </div>
+          <p class="card-text">${escapeHtml(c.text)}</p>
+          <div class="card-actions">
+            <button class="btn btn-delete" onclick="deleteApproved(${c.id})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateBadges() {
+      document.getElementById('pendingBadge').textContent  = getPending().length;
+      document.getElementById('approvedBadge').textContent = getApproved().length;
+    }
+
+    function approve(id) {
+      let pending  = getPending();
+      let approved = getApproved();
+      const idx    = pending.findIndex(c => c.id === id);
+      if (idx === -1) return;
+      const [comment] = pending.splice(idx, 1);
+      approved.push(comment);
+      savePending(pending);
+      saveApproved(approved);
+      render();
+      showToast('Comment approved ✓');
+    }
+
+    function reject(id) {
+      savePending(getPending().filter(c => c.id !== id));
+      render();
+      showToast('Comment rejected');
+    }
+
+    function deleteApproved(id) {
+      saveApproved(getApproved().filter(c => c.id !== id));
+      render();
+      showToast('Comment deleted');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    setInterval(render, 5000);
+    render();
+  </script>
+  </body>
+</html>

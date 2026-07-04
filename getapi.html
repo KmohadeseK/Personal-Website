@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>get api</title>
+    </head>
+    <style>
+body{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 8px;
+}
+img{
+    height:200px ;
+    width: 100%;
+}
+
+.card{
+    border: 1px solid black;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+.preloader{
+   width: 100%; 
+   min-height: 100vh;
+background-color: #000000a9;
+position: fixed;
+top: 0;
+display: grid;
+place-items: center;
+color: white;
+font-size: 2rem;
+display: none;
+}
+    </style>
+    <body>
+
+        <div id="loader" class="preloader">loader</div>
+
+        <!----------- Script Js ----------->
+        <script>
+
+let body = document.querySelector('body')
+let loader = document.querySelector('#loader')
+
+loader.style.diplay=`grid`
+
+    fetch(` https://api.escuelajs.co/api/v1/users`)
+    .then(res=>res.json())
+    .then(data=>{
+        let _data= Object.values(data)
+        console.log(_data);
+       data.map(item=>{
+            let card = document.createElement('div');
+            card.setAttribute('class','card')
+            card.innerHTML=`
+               <img src="${item.avatar}" alt="">
+            <h2>${item.name}</h2>
+            <h2>${item.family}</h2>
+            `
+            body.appendChild(card)
+      
+            })
+    })
+        
+.catch(err=>console.log(err))
+.finally(
+loader.style.diplay=`none`
+
+)
+
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comments</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/comment.css">
+
+  </head>
+  <body>
+    <!--header-container html [START]-->
+    <div id="header-container">
+      <!--header-box html [START]-->
+      <div class="header-box">
+        <img src="images/logo.webp" alt>
+        <!--main-menu html [START]-->
+        <div id="main-menu">
+          <ul class="nav__links">
+            <li><a class="navbar-link" href="#home">HOME</a></li>
+            <li><a class="navbar-link" href="#about">ABOUT</a></li>
+            <li><a class="navbar-link" href="#services">SERVICES</a></li>
+            <li><a class="navbar-link" href="#portfolio">PORTFOLIO</a></li>
+            <li><a class="navbar-link" href="#pricing">PRICING</a></li>
+
+            <!-- Html code main-menu ul :BLOG [START] -->
+            <li>
+              <a class="navbar-link" href="#blog">BLOG</a>
+              <ul>
+                <li><a href="#blog-home">Blog Home</a></li>
+                <li><a href="#blog-single">Blog Single</a></li>
+              </ul>
+            </li>
+            <!-- Html code main-menu ul :BLOG [END] -->
+
+            <!-- Html code main-menu ul :PAGES [START] -->
+            <li>
+              <a class="navbar-link" href="#pages">PAGES</a>
+              <ul>
+                <li><a href="#">Elements</a></li>
+
+                <li>
+                  <!-- Html code main-menu ul>li :Level 2 [START] -->
+                  <a href="#">Level 2</a>
+                  <ul>
+                    <li><a href="#">Item One</a></li>
+                    <li><a href="#">Item Two</a></li>
+                  </ul>
+                </li>
+                <!-- Html code main-menu ul>li :Level 2 [END] -->
+              </ul>
+            </li>
+            <!-- Html code main-menu ul :PAGES [END] -->
+
+            <li><a class="navbar-link" href="#contact">CONTACT</a></li>
+            <li><a class="navbar-link" href="./admin.html" target="_blank">ADMIN
+                PANEL</a></li>
+          </ul>
+        </div>
+        <!--main-menu html [END]-->
+      </div>
+      <!--header-box html [END]-->
+    </div>
+    <!--header-container html [END]-->
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Comments</h1>
+        <p>All comments are reviewed before being published.</p>
+        <div class="divider"></div>
+      </div>
+
+      <div class="comment-form">
+        <div class="form-title">Leave a comment</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email (optional)</label>
+            <input type="email" id="email" placeholder="example@mail.com" />
+          </div>
+        </div>
+        <div class="form-group full" style="margin-bottom:14px;">
+          <label for="comment">Comment *</label>
+          <textarea id="comment"
+            placeholder="Write your comment here…"></textarea>
+        </div>
+        <button class="submit-btn" id="submitBtn"
+          onclick="submitComment()">Submit comment</button>
+
+        <div class="notice pending" id="pendingNotice">
+          <span class="notice-icon">⏳</span>
+          <span>Your comment was submitted and is awaiting admin
+            approval.</span>
+        </div>
+        <div class="notice success" id="successNotice">
+          <span class="notice-icon">✓</span>
+          <span>Your comment has been approved and published.</span>
+        </div>
+        <div class="notice error" id="errorNotice">
+          <span class="notice-icon">!</span>
+          <span id="errorText">Please fill in your name and comment.</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="archive-header">
+          <h2>Comments archive</h2>
+          <span class="comment-count" id="commentCount">0 comments</span>
+        </div>
+        <div class="comments-list" id="commentsList">
+          <div class="empty-state">
+            <div class="empty-icon">💬</div>
+            <p>No comments yet.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+    const STORAGE_KEY_APPROVED = 'comments_approved';
+    const STORAGE_KEY_PENDING  = 'comments_pending';
+
+    function getApproved() { return JSON.parse(localStorage.getItem(STORAGE_KEY_APPROVED) || '[]'); }
+    function getPending()   { return JSON.parse(localStorage.getItem(STORAGE_KEY_PENDING)  || '[]'); }
+    function saveApproved(list) { localStorage.setItem(STORAGE_KEY_APPROVED, JSON.stringify(list)); }
+    function savePending(list)  { localStorage.setItem(STORAGE_KEY_PENDING,  JSON.stringify(list)); }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' })
+           + ' — '
+           + d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderComments() {
+      const list      = getApproved();
+      const container = document.getElementById('commentsList');
+      const countEl   = document.getElementById('commentCount');
+
+      countEl.textContent = list.length + (list.length === 1 ? ' comment' : ' comments');
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">💬</div>
+            <p>No approved comments yet.</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = list.slice().reverse().map(c => `
+        <div class="comment-card">
+          <div class="comment-meta">
+            <span class="comment-author">${escapeHtml(c.name)}</span>
+            <span class="comment-date">${formatDate(c.date)}</span>
+          </div>
+          <p class="comment-text">${escapeHtml(c.text)}</p>
+        </div>
+      `).join('');
+    }
+
+    function showNotice(id) {
+      ['pendingNotice','successNotice','errorNotice'].forEach(n => {
+        document.getElementById(n).classList.remove('show');
+      });
+      document.getElementById(id).classList.add('show');
+    }
+
+    function submitComment() {
+      const name  = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const text  = document.getElementById('comment').value.trim();
+
+      if (!name || !text) { showNotice('errorNotice'); return; }
+
+      const comment = { id: Date.now(), name, email, text, date: new Date().toISOString() };
+      const pending = getPending();
+      pending.push(comment);
+      savePending(pending);
+
+      document.getElementById('name').value    = '';
+      document.getElementById('email').value   = '';
+      document.getElementById('comment').value = '';
+
+      showNotice('pendingNotice');
+
+      const pollInterval = setInterval(() => {
+        const approved = getApproved();
+        if (approved.find(c => c.id === comment.id)) {
+          clearInterval(pollInterval);
+          showNotice('successNotice');
+          renderComments();
+        }
+      }, 3000);
+    }
+
+    renderComments();
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY_APPROVED) renderComments();
+    });
+  </script>
+  </body>
+</html>

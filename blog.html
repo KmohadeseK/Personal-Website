@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>blog Archive</title>
+        <link rel="stylesheet" href="./css/style.css">
+    </head>
+    <body>
+        <!--header-container html [START]-->
+        <div id="header-container">
+            <!--header-box html [START]-->
+            <div class="header-box">
+                <img src="images/logo.webp" alt>
+                <!--main-menu html [START]-->
+                <div id="main-menu">
+                    <ul class="nav__links">
+                        <li><a class="navbar-link" href="#home">HOME</a></li>
+                        <li><a class="navbar-link" href="#about">ABOUT</a></li>
+                        <li><a class="navbar-link"
+                                href="#services">SERVICES</a></li>
+                        <li><a class="navbar-link"
+                                href="#portfolio">PORTFOLIO</a></li>
+                        <li><a class="navbar-link"
+                                href="#pricing">PRICING</a></li>
+
+                        <!-- Html code main-menu ul :BLOG [START] -->
+                        <li>
+                            <a class="navbar-link" href="#blog">BLOG</a>
+                            <ul>
+                                <li><a href="#blog-home">Blog Home</a></li>
+                                <li><a href="#blog-single">Blog Single</a></li>
+                            </ul>
+                        </li>
+                        <!-- Html code main-menu ul :BLOG [END] -->
+
+                        <!-- Html code main-menu ul :PAGES [START] -->
+                        <li>
+                            <a class="navbar-link" href="#pages">PAGES</a>
+                            <ul>
+                                <li><a href="#">Elements</a></li>
+
+                                <li>
+                                    <!-- Html code main-menu ul>li :Level 2 [START] -->
+                                    <a href="#">Level 2</a>
+                                    <ul>
+                                        <li><a href="#">Item One</a></li>
+                                        <li><a href="#">Item Two</a></li>
+                                    </ul>
+                                </li>
+                                <!-- Html code main-menu ul>li :Level 2 [END] -->
+                            </ul>
+                        </li>
+                        <!-- Html code main-menu ul :PAGES [END] -->
+
+                        <li><a class="navbar-link"
+                                href="#contact">CONTACT</a></li>
+                        <li><a class="navbar-link" href="./admin.html"
+                                target="_blank">ADMIN PANEL</a></li>
+
+                    </ul>
+                </div>
+                <!--main-menu html [END]-->
+            </div>
+            <!--header-box html [END]-->
+        </div>
+        <!--header-container html [END]-->
+        <div class="title-post tp-post">
+            <h1>Blog Archive</h1>
+        </div>
+
+        <div class="container-blog">
+            <form id="postForm">
+                <input type="text" name="title" id="title" placeholder="title"
+                    required>
+                <select name="category" id="category">
+                    <option value="tech">technology</option>
+                    <option value="lifestyle">life style</option>
+                </select>
+                <input type="file" name="image" id="image" accept="image/*">
+                <textarea name="content" id="content" placeholder="text post..."
+                    required></textarea>
+                <button type="submit">Publish post</button>
+            </form>
+
+            <div id="blogContainer"></div>
+
+            <div id="postDetailView" style="display: none;">
+                <h2 id="detailTitle"></h2>
+                <small id="detailCategory"></small>
+                <img id="detailImage" src
+                    style="max-width: 100%; height: auto; display: none;"
+                    alt="picture post">
+                <p id="detailContent"></p>
+                <button onclick="hidePostDetail()">return</button>
+            </div>
+        </div>
+
+        <!-------------- SCRIPT JS --------------->
+        <script defer src="script.js"></script>
+    </body>
+</html>
